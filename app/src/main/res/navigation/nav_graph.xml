@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/my_places_fragment">
+
+    <fragment
+        android:id="@+id/map_fragment"
+        android:name="com.obrekht.maps.ui.map.MapFragment"
+        android:label="fragment_map"
+        tools:layout="@layout/fragment_map" />
+
+    <fragment
+        android:id="@+id/my_places_fragment"
+        android:name="com.obrekht.maps.ui.myplaces.MyPlacesFragment"
+        android:label="fragment_my_places"
+        tools:layout="@layout/fragment_my_places" />
+
+    <dialog
+        android:id="@+id/placemark_options"
+        android:name="com.obrekht.maps.ui.map.PlacemarkOptionsFragment"
+        android:label="CommentOptionsDialogFragment"
+        tools:layout="@layout/bottom_sheet_placemark_options">
+        <!--suppress NavigationFile -->
+        <argument
+            android:name="placemarkId"
+            app:argType="long" />
+    </dialog>
+
+    <action
+        android:id="@+id/action_open_placemark_options"
+        app:destination="@id/placemark_options" />
+</navigation>

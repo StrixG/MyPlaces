@@ -3,7 +3,7 @@ package com.obrekht.maps
 import android.app.Application
 import com.yandex.mapkit.MapKitFactory
 
-class MapApplication : Application() {
+class PlacesApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()

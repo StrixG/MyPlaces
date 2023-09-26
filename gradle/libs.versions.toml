@@ -1,10 +1,13 @@
 [versions]
 agp = "8.1.1"
 kotlin = "1.9.10"
+kotlin-ksp = "1.9.10-1.0.13"
 core-ktx = "1.12.0"
 appcompat = "1.6.1"
 material = "1.9.0"
 constraintlayout = "2.1.4"
+navigation = "2.7.3"
+room = "2.5.2"
 yandex-maps = "4.3.1-lite"
 
 [libraries]
@@ -12,11 +15,19 @@ core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+navigation-fragment = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigation" }
+navigation-ui = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigation" }
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 yandex-maps = { module = "com.yandex.android:maps.mobile", version.ref = "yandex-maps" }
+
+[bundles]
+navigation = ["navigation.fragment", "navigation.ui"]
+room = ["room.runtime", "room.ktx"]
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-
-[bundles]
-
+kotlin-ksp = { id = "com.google.devtools.ksp", version.ref = "kotlin-ksp" }
+navigation-safeargs = { id = "androidx.navigation.safeargs", version.ref = "navigation" }

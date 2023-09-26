@@ -2,31 +2,26 @@ package com.obrekht.maps
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
+import androidx.navigation.findNavController
+import androidx.navigation.ui.setupWithNavController
 import com.obrekht.maps.databinding.ActivityMainBinding
+import com.obrekht.maps.utils.viewBinding
 import com.yandex.mapkit.MapKitFactory
 
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainBinding
+    private val binding by viewBinding(ActivityMainBinding::inflate)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        MapKitFactory.initialize(this);
-
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        MapKitFactory.initialize(this)
         setContentView(binding.root)
-    }
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
-    override fun onStop() {
-        binding.mapview.onStop()
-        MapKitFactory.getInstance().onStop()
-        super.onStop()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        MapKitFactory.getInstance().onStart()
-        binding.mapview.onStart()
+        binding.bottomNavigation.apply {
+            setupWithNavController(findNavController(R.id.nav_host_fragment))
+        }
     }
 }

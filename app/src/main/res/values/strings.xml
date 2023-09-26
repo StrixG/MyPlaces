@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">Maps</string>
+    <string name="app_name">My Places</string>
+    <string name="my_places_label">My Places</string>
+    <string name="map_label">Map</string>
+    <string name="placemark">Placemark</string>
+    <string name="add_placemark_title">Add Placemark</string>
 </resources>

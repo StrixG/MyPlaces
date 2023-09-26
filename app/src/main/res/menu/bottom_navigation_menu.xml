@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/my_places_fragment"
+        android:enabled="true"
+        android:icon="@drawable/place_24"
+        android:title="@string/my_places_label"/>
+    <item
+        android:id="@+id/map_fragment"
+        android:enabled="true"
+        android:icon="@drawable/map_24"
+        android:title="@string/map_label"/>
+</menu>
