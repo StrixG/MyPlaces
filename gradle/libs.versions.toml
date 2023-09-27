@@ -8,7 +8,8 @@ material = "1.9.0"
 constraintlayout = "2.1.4"
 navigation = "2.7.3"
 room = "2.5.2"
-yandex-maps = "4.3.1-lite"
+yandex-maps = "4.4.0-lite"
+play-services = "21.0.1"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -21,6 +22,7 @@ room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 yandex-maps = { module = "com.yandex.android:maps.mobile", version.ref = "yandex-maps" }
+play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "play-services" }
 
 [bundles]
 navigation = ["navigation.fragment", "navigation.ui"]

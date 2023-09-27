@@ -4,4 +4,10 @@
     <string name="map_label">Map</string>
     <string name="placemark">Placemark</string>
     <string name="add_placemark_title">Add Placemark</string>
+    <string name="empty_first_place">Make your first mark</string>
+    <string name="location_permission_denied">You\'ve denied access to the location.\nYou won\'t be able to locate yourself on the map.</string>
+    <string name="hint_place_name">Place name</string>
+    <string name="hint_place_description">Description</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
 </resources>

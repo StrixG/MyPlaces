@@ -9,7 +9,13 @@
         android:id="@+id/map_fragment"
         android:name="com.obrekht.maps.ui.map.MapFragment"
         android:label="fragment_map"
-        tools:layout="@layout/fragment_map" />
+        tools:layout="@layout/fragment_map">
+        <!--suppress NavigationFile -->
+        <argument
+            android:name="placeId"
+            android:defaultValue="0L"
+            app:argType="long" />
+    </fragment>
 
     <fragment
         android:id="@+id/my_places_fragment"
@@ -24,11 +30,19 @@
         tools:layout="@layout/bottom_sheet_placemark_options">
         <!--suppress NavigationFile -->
         <argument
-            android:name="placemarkId"
+            android:name="placeId"
+            android:defaultValue="0L"
             app:argType="long" />
     </dialog>
 
     <action
         android:id="@+id/action_open_placemark_options"
         app:destination="@id/placemark_options" />
+
+    <action
+        android:id="@+id/action_open_map"
+        app:destination="@id/map_fragment"
+        app:launchSingleTop="true"
+        app:popUpTo="@id/my_places_fragment"
+        app:popUpToInclusive="true" />
 </navigation>

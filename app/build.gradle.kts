@@ -60,4 +60,5 @@ dependencies {
     ksp(libs.room.compiler)
 
     implementation(libs.yandex.maps)
+    implementation(libs.play.services.location)
 }

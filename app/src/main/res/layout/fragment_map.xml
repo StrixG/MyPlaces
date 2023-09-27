@@ -26,6 +26,19 @@
         app:tint="@color/placemark" />
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_compass"
+        style="?attr/materialIconButtonFilledTonalStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:icon="@drawable/compass_needle_24"
+        app:iconSize="@dimen/compass_icon_size"
+        app:layout_constraintBottom_toTopOf="@id/button_find_me"
+        app:layout_constraintEnd_toEndOf="@id/button_find_me"
+        app:layout_constraintStart_toStartOf="@id/button_find_me"
+        tools:visibility="visible" />
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/button_find_me"
         style="?attr/materialIconButtonFilledTonalStyle"
         android:layout_width="wrap_content"

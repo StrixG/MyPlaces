@@ -2,23 +2,32 @@ package com.obrekht.maps.ui.myplaces
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import com.obrekht.maps.NavGraphDirections
 import com.obrekht.maps.R
 import com.obrekht.maps.databinding.FragmentMyPlacesBinding
 import com.obrekht.maps.model.Place
 import com.obrekht.maps.utils.viewBinding
+import kotlinx.coroutines.launch
 
 class MyPlacesFragment : Fragment(R.layout.fragment_my_places) {
 
     private val binding by viewBinding(FragmentMyPlacesBinding::bind)
-    private val viewModel: MyPlacesViewModel by viewModels()
+    private val viewModel: MyPlacesViewModel by viewModels { MyPlacesViewModel.Factory }
 
     private var adapter: MyPlacesAdapter? = null
 
     private val interactionListener: PlaceInteractionListener = object : PlaceInteractionListener {
         override fun onClick(place: Place, view: View) {
-
+            val action = NavGraphDirections.actionOpenMap().apply {
+                placeId = place.id
+            }
+            findNavController().navigate(action)
         }
     }
 
@@ -26,11 +35,21 @@ class MyPlacesFragment : Fragment(R.layout.fragment_my_places) {
         adapter = MyPlacesAdapter(interactionListener)
         placesList.adapter = adapter
 
-        adapter?.submitList(listOf(
-            Place(1, "Test", "", 20.0, 50.0),
-            Place(2, "Test 2", "", 20.0, 55.0),
-            Place(3, "Test 3", "", 25.0, 50.0),
-        ))
+        emptyButton.setOnClickListener {
+            val action = NavGraphDirections.actionOpenMap().apply {
+                placeId = 0
+            }
+            findNavController().navigate(action)
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.uiState.flowWithLifecycle(viewLifecycleOwner.lifecycle)
+                .collect {
+                    adapter?.submitList(it.placeList)
+
+                    emptyView.isVisible = it.placeList.isEmpty()
+                }
+        }
 
         Unit
     }

@@ -4,4 +4,6 @@
     <dimen name="find_me_icon_size">32dp</dimen>
     <dimen name="find_me_button_padding">16dp</dimen>
     <dimen name="placemark_size">64dp</dimen>
+    <dimen name="empty_image_size">256dp</dimen>
+    <dimen name="compass_icon_size">24dp</dimen>
 </resources>
