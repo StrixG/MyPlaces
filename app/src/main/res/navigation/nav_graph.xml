@@ -10,11 +10,16 @@
         android:name="com.obrekht.maps.ui.map.MapFragment"
         android:label="fragment_map"
         tools:layout="@layout/fragment_map">
+
         <!--suppress NavigationFile -->
         <argument
             android:name="placeId"
             android:defaultValue="0L"
             app:argType="long" />
+
+        <action
+            android:id="@+id/action_open_place_edit"
+            app:destination="@id/place_edit" />
     </fragment>
 
     <fragment
@@ -24,25 +29,14 @@
         tools:layout="@layout/fragment_my_places" />
 
     <dialog
-        android:id="@+id/placemark_options"
-        android:name="com.obrekht.maps.ui.map.PlacemarkOptionsFragment"
+        android:id="@+id/place_edit"
+        android:name="com.obrekht.maps.ui.map.PlaceEditFragment"
         android:label="CommentOptionsDialogFragment"
-        tools:layout="@layout/bottom_sheet_placemark_options">
+        tools:layout="@layout/bottom_sheet_place_edit">
         <!--suppress NavigationFile -->
         <argument
             android:name="placeId"
             android:defaultValue="0L"
             app:argType="long" />
     </dialog>
-
-    <action
-        android:id="@+id/action_open_placemark_options"
-        app:destination="@id/placemark_options" />
-
-    <action
-        android:id="@+id/action_open_map"
-        app:destination="@id/map_fragment"
-        app:launchSingleTop="true"
-        app:popUpTo="@id/my_places_fragment"
-        app:popUpToInclusive="true" />
 </navigation>

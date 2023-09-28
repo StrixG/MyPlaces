@@ -11,19 +11,35 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/common_spacing"
-        android:layout_marginVertical="@dimen/common_spacing"
+        android:layout_marginTop="@dimen/common_spacing"
         android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="@string/placemark" />
 
+    <TextView
+        android:id="@+id/description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/common_spacing"
+        android:ellipsize="end"
+        android:maxLines="3"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/divider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        tools:text="@tools:sample/lorem/random" />
+
     <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/common_spacing"
+        android:layout_marginTop="@dimen/common_spacing"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/description" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

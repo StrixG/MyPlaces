@@ -13,18 +13,18 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.obrekht.maps.R
-import com.obrekht.maps.databinding.BottomSheetPlacemarkOptionsBinding
+import com.obrekht.maps.databinding.BottomSheetPlaceEditBinding
 import com.obrekht.maps.utils.viewBinding
 import kotlinx.coroutines.launch
 
-class PlacemarkOptionsFragment :
-    BottomSheetDialogFragment(R.layout.bottom_sheet_placemark_options) {
+class PlaceEditFragment :
+    BottomSheetDialogFragment(R.layout.bottom_sheet_place_edit) {
 
     private val viewModel: MapViewModel
             by navGraphViewModels(R.id.map_fragment) { MapViewModel.Factory }
 
-    private val binding by viewBinding(BottomSheetPlacemarkOptionsBinding::bind)
-    private val args: PlacemarkOptionsFragmentArgs by navArgs()
+    private val binding by viewBinding(BottomSheetPlaceEditBinding::bind)
+    private val args: PlaceEditFragmentArgs by navArgs()
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

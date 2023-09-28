@@ -7,11 +7,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
-import com.obrekht.maps.NavGraphDirections
 import com.obrekht.maps.R
 import com.obrekht.maps.databinding.FragmentMyPlacesBinding
 import com.obrekht.maps.model.Place
+import com.obrekht.maps.ui.navigateToMap
 import com.obrekht.maps.utils.viewBinding
 import kotlinx.coroutines.launch
 
@@ -24,10 +23,7 @@ class MyPlacesFragment : Fragment(R.layout.fragment_my_places) {
 
     private val interactionListener: PlaceInteractionListener = object : PlaceInteractionListener {
         override fun onClick(place: Place, view: View) {
-            val action = NavGraphDirections.actionOpenMap().apply {
-                placeId = place.id
-            }
-            findNavController().navigate(action)
+            navigateToMap(place.id)
         }
     }
 
@@ -35,11 +31,8 @@ class MyPlacesFragment : Fragment(R.layout.fragment_my_places) {
         adapter = MyPlacesAdapter(interactionListener)
         placesList.adapter = adapter
 
-        emptyButton.setOnClickListener {
-            val action = NavGraphDirections.actionOpenMap().apply {
-                placeId = 0
-            }
-            findNavController().navigate(action)
+        buttonCreateFirst.setOnClickListener {
+            navigateToMap()
         }
 
         viewLifecycleOwner.lifecycleScope.launch {

@@ -13,7 +13,6 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.flowWithLifecycle
@@ -26,7 +25,6 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.material.snackbar.Snackbar
-import com.obrekht.maps.NavGraphDirections
 import com.obrekht.maps.R
 import com.obrekht.maps.databinding.FragmentMapBinding
 import com.obrekht.maps.model.Place
@@ -36,6 +34,9 @@ import com.obrekht.maps.utils.viewBinding
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.logo.Alignment
+import com.yandex.mapkit.logo.HorizontalAlignment
+import com.yandex.mapkit.logo.VerticalAlignment
 import com.yandex.mapkit.map.CameraListener
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.CameraUpdateReason
@@ -57,7 +58,6 @@ class MapFragment : Fragment(R.layout.fragment_map) {
     private val args: MapFragmentArgs by navArgs()
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private var insetsController: WindowInsetsControllerCompat? = null
 
     private lateinit var map: Map
     private var pinIcon: Bitmap? = null
@@ -116,19 +116,20 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         }
     }
 
+    private val cameraMovedCallback = Map.CameraCallback { completed ->
+        if (view == null) return@CameraCallback
+
+        if (completed) {
+            openPlaceEdit()
+        }
+    }
+
     private val inputListener = object : InputListener {
         override fun onMapTap(map: Map, point: Point) {
             viewModel.clearPlace()
             showPin()
 
-            moveCamera(point, callback = Map.CameraCallback { completed ->
-                if (completed) {
-                    val action = NavGraphDirections.actionOpenPlacemarkOptions().apply {
-                        placeId = 0
-                    }
-                    findNavController().navigate(action)
-                }
-            })
+            moveCamera(point, callback = cameraMovedCallback)
         }
 
         override fun onMapLongTap(map: Map, point: Point) {}
@@ -138,10 +139,7 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         if (mapObject is PlacemarkMapObject && mapObject.userData is Long) {
             val placeId = mapObject.userData as Long
             viewModel.loadPlace(placeId)
-            val action = NavGraphDirections.actionOpenPlacemarkOptions().apply {
-                this.placeId = placeId
-            }
-            findNavController().navigate(action)
+            openPlaceEdit(placeId)
 
             true
         } else {
@@ -159,7 +157,7 @@ class MapFragment : Fragment(R.layout.fragment_map) {
             ContextCompat.getColor(requireContext(), R.color.transparent_gray)
 
         map = binding.mapView.mapWindow.map.apply {
-            isFastTapEnabled = true
+            logo.setAlignment(Alignment(HorizontalAlignment.LEFT, VerticalAlignment.BOTTOM))
             addInputListener(inputListener)
             addCameraListener(cameraListener)
         }
@@ -220,7 +218,9 @@ class MapFragment : Fragment(R.layout.fragment_map) {
     override fun onDestroyView() {
         requireActivity().window.statusBarColor = 0
 
-        insetsController = null
+        map.removeCameraListener(cameraListener)
+        map.removeInputListener(inputListener)
+
         super.onDestroyView()
     }
 
@@ -256,6 +256,13 @@ class MapFragment : Fragment(R.layout.fragment_map) {
                 Manifest.permission.ACCESS_COARSE_LOCATION
             )
         )
+    }
+
+    private fun openPlaceEdit(placeId: Long = 0L) {
+        val action = MapFragmentDirections.actionOpenPlaceEdit().apply {
+            this.placeId = placeId
+        }
+        findNavController().navigate(action)
     }
 
     private fun addPlaceOnMap(place: Place) {
@@ -360,7 +367,7 @@ class MapFragment : Fragment(R.layout.fragment_map) {
 
     private fun tryStickToNorth() {
         map.cameraPosition.run {
-            if (azimuth < STICK_NORTH_AZIMUTH_OFFSET || azimuth > 360f - STICK_NORTH_AZIMUTH_OFFSET) {
+            if (azimuth <= STICK_NORTH_AZIMUTH_OFFSET || azimuth >= 360f - STICK_NORTH_AZIMUTH_OFFSET) {
                 map.move(
                     CameraPosition(
                         target, zoom, 0f, tilt
@@ -371,10 +378,9 @@ class MapFragment : Fragment(R.layout.fragment_map) {
     }
 
     companion object {
+        private val CAMERA_ANIMATION = Animation(Animation.Type.SMOOTH, 0.4f)
         private const val STICK_NORTH_AZIMUTH_OFFSET = 10f
         private const val DEFAULT_ZOOM = 15f
-        private val START_POSITION = CameraPosition(Point(54.710161, 20.510138), 15f, 0f, 0f)
-        private val CAMERA_ANIMATION = Animation(Animation.Type.SMOOTH, 0.4f)
 
         private const val KEY_CAMERA_POSITION_TARGET = "camera_position_target"
         private const val KEY_CAMERA_POSITION_ZOOM = "camera_position_zoom"

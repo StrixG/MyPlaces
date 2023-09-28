@@ -55,6 +55,7 @@ dependencies {
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.constraintlayout)
+    implementation(libs.bundles.recyclerview)
     implementation(libs.bundles.navigation)
     implementation(libs.bundles.room)
     ksp(libs.room.compiler)
