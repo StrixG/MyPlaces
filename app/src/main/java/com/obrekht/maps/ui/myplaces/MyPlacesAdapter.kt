@@ -3,6 +3,7 @@ package com.obrekht.maps.ui.myplaces
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -42,7 +43,11 @@ class MyPlacesAdapter(
 
         fun bind(place: Place) {
             this.place = place
-            binding.title.text = place.name
+            with(binding) {
+                title.text = place.name
+                description.text = place.description
+                description.isVisible = place.description.isNotEmpty()
+            }
         }
 
         fun recycle() {
