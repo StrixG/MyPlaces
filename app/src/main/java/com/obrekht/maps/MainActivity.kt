@@ -3,11 +3,8 @@ package com.obrekht.maps
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
-import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.setupWithNavController
 import com.obrekht.maps.databinding.ActivityMainBinding
 import com.obrekht.maps.utils.viewBinding
 import com.yandex.mapkit.MapKitFactory
