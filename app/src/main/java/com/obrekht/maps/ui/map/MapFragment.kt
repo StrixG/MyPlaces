@@ -43,10 +43,12 @@ import com.yandex.mapkit.map.CameraUpdateReason
 import com.yandex.mapkit.map.IconStyle
 import com.yandex.mapkit.map.InputListener
 import com.yandex.mapkit.map.Map
+import com.yandex.mapkit.map.Map.CameraCallback
 import com.yandex.mapkit.map.MapObjectTapListener
 import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.mapkit.map.TextStyle
 import com.yandex.runtime.image.ImageProvider
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
 class MapFragment : Fragment(R.layout.fragment_map) {
@@ -66,6 +68,11 @@ class MapFragment : Fragment(R.layout.fragment_map) {
     private var shortAnimationDuration: Int = 0
 
     private var isPinVisible: Boolean = false
+
+    private val isInteractive: Boolean
+        get() = findNavController().currentBackStackEntry?.let {
+            it.destination.id == R.id.map_fragment
+        } ?: false
 
     private val locationPermissionRequest = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -116,8 +123,8 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         }
     }
 
-    private val cameraMovedCallback = Map.CameraCallback { completed ->
-        if (view == null) return@CameraCallback
+    private val cameraMovedCallback = CameraCallback { completed ->
+        if (view == null || !isInteractive) return@CameraCallback
 
         if (completed) {
             openPlaceEdit()
@@ -126,9 +133,9 @@ class MapFragment : Fragment(R.layout.fragment_map) {
 
     private val inputListener = object : InputListener {
         override fun onMapTap(map: Map, point: Point) {
-            viewModel.clearPlace()
-            showPin()
+            if (!isInteractive) return
 
+            showPin()
             moveCamera(point, callback = cameraMovedCallback)
         }
 
@@ -136,10 +143,17 @@ class MapFragment : Fragment(R.layout.fragment_map) {
     }
 
     private val placemarkTapListener = MapObjectTapListener { mapObject, _ ->
+        if (!isInteractive) return@MapObjectTapListener false
+
         if (mapObject is PlacemarkMapObject && mapObject.userData is Long) {
             val placeId = mapObject.userData as Long
-            viewModel.loadPlace(placeId)
-            openPlaceEdit(placeId)
+
+            val callback = CameraCallback {
+                if (isInteractive) {
+                    openPlaceEdit(placeId)
+                }
+            }
+            moveCamera(target = mapObject.geometry, DEFAULT_ZOOM, 0f, 0f, callback = callback)
 
             true
         } else {
@@ -200,18 +214,8 @@ class MapFragment : Fragment(R.layout.fragment_map) {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.flowWithLifecycle(viewLifecycleOwner.lifecycle)
-                .collect {
-                    hidePin()
+                .collect(::handleUiState)
 
-                    if (!it.isCameraMoved && it.selectedPlace != null) {
-                        val point = Point(it.selectedPlace.latitude, it.selectedPlace.longitude)
-                        moveCamera(point, DEFAULT_ZOOM, 0f, 0f)
-                        viewModel.cameraMoved()
-                    }
-
-                    map.mapObjects.clear()
-                    it.placeList.forEach(::addPlaceOnMap)
-                }
         }
     }
 
@@ -258,11 +262,38 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         )
     }
 
+    private fun handleUiState(state: MapUiState) {
+        if (!state.isCameraMoved && state.moveToPlace != null) {
+            val point = Point(state.moveToPlace.latitude, state.moveToPlace.longitude)
+            moveCamera(point, DEFAULT_ZOOM, 0f, 0f)
+            viewModel.cameraMoved()
+        }
+
+        map.mapObjects.clear()
+        state.placeList.forEach(::addPlaceOnMap)
+    }
+
     private fun openPlaceEdit(placeId: Long = 0L) {
+        if (placeId > 0L) {
+            viewModel.loadPlace(placeId)
+        }
+        binding.mapView.setNoninteractive(true)
+
         val action = MapFragmentDirections.actionOpenPlaceEdit().apply {
             this.placeId = placeId
         }
         findNavController().navigate(action)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            findNavController().currentBackStackEntryFlow.flowWithLifecycle(viewLifecycleOwner.lifecycle)
+                .collect {
+                    if (it.destination.id == R.id.map_fragment) {
+                        hidePin()
+                        binding.mapView.setNoninteractive(false)
+                        cancel()
+                    }
+                }
+        }
     }
 
     private fun addPlaceOnMap(place: Place) {
@@ -341,7 +372,7 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         azimuth: Float? = null,
         tilt: Float? = null,
         animate: Boolean = true,
-        callback: Map.CameraCallback? = null
+        callback: CameraCallback? = null
     ) {
         map.cameraPosition.run {
             val position = CameraPosition(

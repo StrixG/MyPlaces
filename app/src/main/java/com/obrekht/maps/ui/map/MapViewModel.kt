@@ -30,7 +30,9 @@ class MapViewModel(
     private var longitude: Double = 0.0
 
     init {
-        loadPlace(args.placeId)
+        if (args.placeId > 0L) {
+            moveToPlace(args.placeId)
+        }
         viewModelScope.launch {
             placeRepository.getPlaceListStream().collect { placeList ->
                 _uiState.update { uiState ->
@@ -45,21 +47,28 @@ class MapViewModel(
         this.longitude = longitude
     }
 
-    fun cameraMoved() {
-        _uiState.update { it.copy(isCameraMoved = true) }
-    }
-
     fun loadPlace(placeId: Long) {
         viewModelScope.launch {
             val place = placeRepository.getById(placeId)
-            _uiState.update { it.copy(isCameraMoved = false, selectedPlace = place) }
+            _uiState.update { it.copy(selectedPlace = place) }
         }
     }
 
     fun clearPlace() {
-        _uiState.update { it.copy(isCameraMoved = false, selectedPlace = null) }
+        _uiState.update { it.copy(selectedPlace = null) }
     }
 
+
+    fun moveToPlace(placeId: Long) {
+        viewModelScope.launch {
+            val place = placeRepository.getById(placeId)
+            _uiState.update { it.copy(isCameraMoved = false, moveToPlace = place) }
+        }
+    }
+
+    fun cameraMoved() {
+        _uiState.update { it.copy(isCameraMoved = true, moveToPlace = null) }
+    }
     fun savePlace(name: String, description: String) {
         if (name.isBlank()) return
 
@@ -94,7 +103,8 @@ class MapViewModel(
 }
 
 data class MapUiState(
-    val selectedPlace: Place? = null,
     val placeList: List<Place> = emptyList(),
+    val selectedPlace: Place? = null,
+    val moveToPlace: Place? = null,
     val isCameraMoved: Boolean = false
 )

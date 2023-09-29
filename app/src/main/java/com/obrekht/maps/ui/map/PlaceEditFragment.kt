@@ -1,6 +1,7 @@
 package com.obrekht.maps.ui.map
 
 import android.annotation.SuppressLint
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
@@ -55,13 +56,11 @@ class PlaceEditFragment :
                     editTextName.text.toString(),
                     editTextDescription.text.toString()
                 )
-                viewModel.clearPlace()
                 dismiss()
             }
 
             buttonDelete.setOnClickListener {
                 viewModel.deletePlace(args.placeId)
-                viewModel.clearPlace()
                 dismiss()
             }
         }
@@ -77,5 +76,14 @@ class PlaceEditFragment :
                     }
                 }
         }
+    }
+
+    override fun onCancel(dialog: DialogInterface) {
+        viewModel.clearPlace()
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        viewModel.clearPlace()
+        super.onDismiss(dialog)
     }
 }
